@@ -4,6 +4,12 @@ All notable changes to `dkdc-io-imessage` are documented here. Format loosely
 follows [Keep a Changelog](https://keepachangelog.com/) and the project uses
 [SemVer](https://semver.org/).
 
+## [0.1.6] - 2026-04-18
+
+### Changed
+
+- docs: real end-to-end claude capture + round-trip screenshot + scripts/
+
 ## [0.1.5] - 2026-04-18
 
 ### Added

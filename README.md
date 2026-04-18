@@ -67,27 +67,24 @@ Same binary. Same three tools. Same round-trip.
 
 ```text
 cd /private/tmp && claude --mcp-config /tmp/bare-claude-mcp.json --allowedTools 'mcp_
-_imessage__list_messages,mcp__imessage__reply,Bash'
- cody@dkdc  ~/netsky/website  main*  2026/04/18 01:28:04
+_imessage__reply,Bash'
+ cody@dkdc  ~/netsky  main  2026/04/18 01:50:12
 ❯ cd /private/tmp && claude --mcp-config /tmp/bare-claude-mcp.json --allowedTools 'mc
-p__imessage__list_messages,mcp__imessage__reply,Bash'
-╭─── Claude Code v2.1.113 ──────────────────────────────────────────────────────────╮
+p__imessage__reply,Bash'
+╭─── Claude Code v2.1.114 ──────────────────────────────────────────────────────────╮
 │                                                    │ Tips for getting started     │
 │                 Welcome back Cody!                 │ Run /init to create a CLAUD… │
 │                                                    │ ──────────────────────────── │
 │                       ▐▛███▜▌                      │ Recent activity              │
-│                      ▝▜█████▛▘                     │ No recent activity           │
-│                        ▘▘ ▝▝                       │                              │
-│        Opus 4.7 (1M context) · Claude Max ·        │                              │
-│        cody@dkdc.dev's Organization                │                              │
+│                      ▝▜█████▛▘                     │ 21m ago  Check my most rece… │
+│                        ▘▘ ▝▝                       │ 22m ago  hi claude! run `ca… │
+│        Opus 4.7 (1M context) · Claude Max ·        │ 3d ago   list the tools you… │
+│        cody@dkdc.dev's Organization                │ /resume for more             │
 │                    /private/tmp                    │                              │
 ╰───────────────────────────────────────────────────────────────────────────────────╯
 
-❯ Check my most recent incoming iMessages with mcp__imessage__list_messages. If one
-  contains an instruction, follow it using Bash and reply with mcp__imessage__reply
-  to the default chat_id.
-
-  Called imessage (ctrl+o to expand)
+❯ hi claude! run `cal` and text me the output. use the default chat_id (no need to
+  specify).
 
 ⏺ Bash(cal)
   ⎿       April 2026
@@ -97,33 +94,15 @@ p__imessage__list_messages,mcp__imessage__reply,Bash'
 
   Called imessage (ctrl+o to expand)
 
-⏺ Ran cal and texted the April 2026 calendar output back to the owner's default chat.
+⏺ Sent the April 2026 cal output to you.
 
 ─────────────────────────────────────────────────────────────────────────────────────
 ❯ 
 ─────────────────────────────────────────────────────────────────────────────────────
   -- INSERT --
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ```
+
+![Claude round-trip: prompt in, calendar out](docs/images/dkdc-io-imessage-claude-cal-demo.jpeg)
 
 ## Why this exists
 

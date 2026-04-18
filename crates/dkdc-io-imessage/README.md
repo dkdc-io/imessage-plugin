@@ -69,7 +69,14 @@ allowlist is empty. dkdc-io-imessage is fail-closed by default. Edit
 
 ### Codex CLI
 
-Add to `~/.codex/config.toml`:
+Preferred path:
+
+```sh
+codex mcp add imessage -- dkdc-io-imessage --stdio
+codex mcp list
+```
+
+Direct edit works too, for reference:
 
 ```toml
 [mcp_servers.imessage]
@@ -77,19 +84,20 @@ command = "dkdc-io-imessage"
 args    = ["--stdio"]
 ```
 
-Then start Codex and list tools:
-
-```sh
-codex
-# inside the REPL
-> /mcp list
-```
-
-You should see `reply`, `list_messages`, `read_message` under `imessage`.
+You should see `imessage` in the MCP list, with `reply`, `list_messages`, and
+`read_message` available on the next Codex start.
 
 ### Claude Code
 
-Add to `~/.claude.json` (or per-project `.mcp.json`):
+Preferred path:
+
+```sh
+claude mcp add imessage dkdc-io-imessage --stdio
+claude mcp list
+```
+
+Direct edit works too, for reference. Add to `~/.claude.json` (or per-project
+`.mcp.json`):
 
 ```json
 {
@@ -103,8 +111,7 @@ Add to `~/.claude.json` (or per-project `.mcp.json`):
 }
 ```
 
-Then start Claude Code. Run `/mcp` to confirm the `imessage` source is
-connected.
+You should see `imessage` in the MCP list on the next Claude start.
 
 ## Example prompts
 
