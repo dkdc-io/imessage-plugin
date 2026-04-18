@@ -148,7 +148,16 @@ pub async fn handle_message(msg: Value, state: Arc<State>, access: &Access) -> O
                 id,
                 json!({
                     "protocolVersion": client_version,
-                    "capabilities": { "tools": {} },
+                    // `experimental.claude/channel` tells Claude Code (and the
+                    // codex fork) that this server wants to push
+                    // `notifications/claude/channel` events — without this
+                    // key declared, Claude Code silently drops the
+                    // notifications on the floor. Must stay in lockstep with
+                    // the emit in crate::watch.
+                    "capabilities": {
+                        "experimental": { "claude/channel": {} },
+                        "tools": {}
+                    },
                     "serverInfo": {
                         "name": SERVER_NAME,
                         "version": crate::VERSION,
@@ -274,6 +283,14 @@ mod tests {
         assert_eq!(resp["id"], json!(1));
         assert_eq!(resp["result"]["serverInfo"]["name"], json!(SERVER_NAME));
         assert!(resp["result"]["capabilities"]["tools"].is_object());
+        // Claude Code drops `notifications/claude/channel` events unless this
+        // experimental capability is declared. Regression guard for 0.2.1.
+        assert!(
+            resp["result"]["capabilities"]["experimental"]["claude/channel"].is_object(),
+            "initialize must declare experimental.claude/channel so Claude Code \
+             forwards push notifications from the watcher. got capabilities: {}",
+            resp["result"]["capabilities"]
+        );
     }
 
     #[tokio::test]
