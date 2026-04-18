@@ -2,7 +2,7 @@
 
 Text your coding agent. Get a reply back in Messages.
 
-`imessage-mcp` is a Rust MCP server for macOS. Point Codex CLI, Claude
+This repo ships `dkdc-io-imessage`, a Rust MCP server for macOS. Point Codex CLI, Claude
 Code, or any stdio MCP client at one binary and it can:
 
 - send iMessage with `reply(chat_id, text)`
@@ -11,7 +11,7 @@ Code, or any stdio MCP client at one binary and it can:
 
 Local allowlist only. Empty config fails closed.
 
-[crates.io](https://crates.io/crates/imessage-mcp) ·
+[crates.io](https://crates.io/crates/dkdc-io-imessage) ·
 [docs](crates/imessage-mcp/README.md) ·
 [install script](https://dkdc.sh/imessage-mcp/install.sh)
 
@@ -106,7 +106,7 @@ p__imessage__reply,Bash'
 
 ## Why this exists
 
-- one binary: `cargo install imessage-mcp`
+- one binary: `cargo install dkdc-io-imessage`
 - no framework lock-in: Codex CLI, Claude Code, or any stdio MCP client
 - real Messages integration: send via AppleScript, read from `chat.db`
 - tight surface area: three tools, no extra daemon, no event bus
@@ -119,14 +119,14 @@ p__imessage__reply,Bash'
 curl -LsSf https://dkdc.sh/imessage-mcp/install.sh | sh
 
 # already have cargo:
-cargo install imessage-mcp
+cargo install dkdc-io-imessage
 ```
 
 Then:
 
 1. grant Full Disk Access to the host process that will run the binary
 2. populate `~/.config/dkdc-io/imessage/access.toml`
-3. point your client at `imessage-mcp --stdio`
+3. point your client at `dkdc-io-imessage --stdio`
 
 Full setup and config snippets for Codex and Claude Code live in the
 [crate README](crates/imessage-mcp/README.md).

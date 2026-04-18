@@ -1,5 +1,5 @@
 [package]
-name = "imessage-mcp"
+name = "dkdc-io-imessage"
 description = "iMessage MCP server for Codex CLI and Claude Code. Lets an LLM read and send iMessage on macOS."
 version.workspace = true
 edition.workspace = true
@@ -11,11 +11,11 @@ keywords = ["mcp", "imessage", "codex", "claude", "llm"]
 categories = ["command-line-utilities"]
 
 [[bin]]
-name = "imessage-mcp"
+name = "dkdc-io-imessage"
 path = "src/main.rs"
 
 [lib]
-name = "imessage_mcp"
+name = "dkdc_io_imessage"
 path = "src/lib.rs"
 
 [dependencies]

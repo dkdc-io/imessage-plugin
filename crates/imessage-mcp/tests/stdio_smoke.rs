@@ -13,7 +13,7 @@ use serde_json::{Value, json};
 /// Path to the cargo-built binary.
 fn bin_path() -> String {
     // Cargo sets CARGO_BIN_EXE_<name> for binary targets at integration test compile time.
-    env!("CARGO_BIN_EXE_imessage-mcp").to_string()
+    env!("CARGO_BIN_EXE_dkdc-io-imessage").to_string()
 }
 
 fn isolated_env(tmp: &tempfile::TempDir) -> Vec<(String, String)> {
@@ -70,7 +70,7 @@ fn send_and_receive(requests: &[Value]) -> Vec<Value> {
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()
-        .expect("spawn imessage-mcp");
+        .expect("spawn dkdc-io-imessage");
 
     let mut stdin = child.stdin.take().expect("stdin");
     let stdout = child.stdout.take().expect("stdout");
@@ -121,7 +121,7 @@ fn initialize_then_tools_list_returns_three_tools() {
     assert_eq!(responses[0]["id"], json!(1));
     assert_eq!(
         responses[0]["result"]["serverInfo"]["name"],
-        json!("imessage-mcp")
+        json!("dkdc-io-imessage")
     );
 
     assert_eq!(responses[1]["id"], json!(2));

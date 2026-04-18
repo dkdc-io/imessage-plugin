@@ -1,5 +1,5 @@
 use std::process::ExitCode;
 
 fn main() -> ExitCode {
-    imessage_mcp::cli::run()
+    dkdc_io_imessage::cli::run()
 }

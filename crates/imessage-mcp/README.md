@@ -1,4 +1,4 @@
-# imessage-mcp
+# dkdc-io-imessage
 
 An iMessage MCP server. Lets an LLM CLI (Codex CLI, Claude Code, or any
 JSON-RPC-over-stdio MCP client) read and send iMessages on macOS.
@@ -19,10 +19,10 @@ a pointer back to the config file.
 curl -LsSf https://dkdc.sh/imessage-mcp/install.sh | sh
 
 # already have cargo:
-cargo install imessage-mcp
+cargo install dkdc-io-imessage
 ```
 
-Either way you end up with the `imessage-mcp` binary on your `$PATH`. The
+Either way you end up with the `dkdc-io-imessage` binary on your `$PATH`. The
 first script installs `rustup` if it isn't present, then runs `cargo install`.
 
 ## macOS prerequisites
@@ -54,13 +54,13 @@ handles  = ["+15551234567", "you@icloud.com"]
 Verify with:
 
 ```sh
-imessage-mcp check
+dkdc-io-imessage check
 ```
 
 Empty allowlist is intentional. Any tool call returns:
 
 ```
-allowlist is empty. imessage-mcp is fail-closed by default. Edit
+allowlist is empty. dkdc-io-imessage is fail-closed by default. Edit
 ~/.config/dkdc-io/imessage/access.toml to add `self.chat_id` and/or
 `allow_from` handles, then retry.
 ```
@@ -72,7 +72,7 @@ allowlist is empty. imessage-mcp is fail-closed by default. Edit
 Preferred path:
 
 ```sh
-codex mcp add imessage -- imessage-mcp --stdio
+codex mcp add imessage -- dkdc-io-imessage --stdio
 codex mcp list
 ```
 
@@ -84,7 +84,7 @@ Direct edit works too, for reference:
 
 ```toml
 [mcp_servers.imessage]
-command = "imessage-mcp"
+command = "dkdc-io-imessage"
 args    = ["--stdio"]
 ```
 
@@ -96,7 +96,7 @@ You should see `imessage` in the MCP list, with `reply`, `list_messages`, and
 Preferred path:
 
 ```sh
-claude mcp add imessage imessage-mcp --stdio
+claude mcp add imessage dkdc-io-imessage --stdio
 claude mcp list
 ```
 
@@ -108,7 +108,7 @@ Direct edit works too, for reference. Add to `~/.claude.json` (or per-project
   "mcpServers": {
     "imessage": {
       "type": "stdio",
-      "command": "imessage-mcp",
+      "command": "dkdc-io-imessage",
       "args": ["--stdio"]
     }
   }
