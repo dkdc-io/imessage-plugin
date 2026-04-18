@@ -4,6 +4,14 @@ All notable changes to `dkdc-io-imessage` are documented here. Format loosely
 follows [Keep a Changelog](https://keepachangelog.com/) and the project uses
 [SemVer](https://semver.org/).
 
+## [0.2.2] - 2026-04-18
+
+### Changed
+
+- docs: mirror the blog's tested setup differences section in the repo README
+- docs: replace the old Claude block with the real channel-push capture
+- docs: clarify that `demo-claude-imessage.sh` is lightweight verification, not the only inbound path
+
 ## [0.2.1] - 2026-04-18
 
 ### Fixed
