@@ -4,6 +4,17 @@ All notable changes to `dkdc-io-imessage` are documented here. Format loosely
 follows [Keep a Changelog](https://keepachangelog.com/) and the project uses
 [SemVer](https://semver.org/).
 
+## [0.2.1] - 2026-04-18
+
+### Fixed
+
+- Declare the `experimental.claude/channel` capability in the `initialize`
+  response. Without it, Claude Code silently discards the
+  `notifications/claude/channel` events the watcher emits, so 0.2.0 pushed
+  nothing into live Claude sessions. Regression guards added in both the
+  `mcp::tests::initialize_returns_server_info` unit test and the full-wire
+  `stdio_smoke` integration test.
+
 ## [0.2.0] - 2026-04-18
 
 ### Added

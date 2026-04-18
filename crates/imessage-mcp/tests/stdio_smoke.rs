@@ -124,6 +124,13 @@ fn initialize_then_tools_list_returns_three_tools() {
         responses[0]["result"]["serverInfo"]["name"],
         json!("dkdc-io-imessage")
     );
+    // Claude Code drops `notifications/claude/channel` unless the server
+    // declares experimental.claude/channel here. Full-wire regression guard.
+    assert!(
+        responses[0]["result"]["capabilities"]["experimental"]["claude/channel"].is_object(),
+        "initialize response must advertise experimental.claude/channel; got: {}",
+        responses[0]["result"]["capabilities"]
+    );
 
     assert_eq!(responses[1]["id"], json!(2));
     let tools = responses[1]["result"]["tools"].as_array().unwrap();
