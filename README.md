@@ -67,40 +67,24 @@ your phone.
 Same binary. Same three tools. Same round-trip.
 
 ```text
-cd /private/tmp && claude --mcp-config /tmp/bare-claude-mcp.json --allowedTools 'mcp_
-_imessage__reply,Bash'
- cody@dkdc  ~/netsky  main  2026/04/18 01:50:12
-❯ cd /private/tmp && claude --mcp-config /tmp/bare-claude-mcp.json --allowedTools 'mc
-p__imessage__reply,Bash'
-╭─── Claude Code v2.1.114 ──────────────────────────────────────────────────────────╮
-│                                                    │ Tips for getting started     │
-│                 Welcome back Cody!                 │ Run /init to create a CLAUD… │
-│                                                    │ ──────────────────────────── │
-│                       ▐▛███▜▌                      │ Recent activity              │
-│                      ▝▜█████▛▘                     │ 21m ago  Check my most rece… │
-│                        ▘▘ ▝▝                       │ 22m ago  hi claude! run `ca… │
-│        Opus 4.7 (1M context) · Claude Max ·        │ 3d ago   list the tools you… │
-│        cody@dkdc.dev's Organization                │ /resume for more             │
-│                    /private/tmp                    │                              │
-╰───────────────────────────────────────────────────────────────────────────────────╯
+ ▐▛███▜▌   Claude Code v2.1.114
+▝▜█████▛▘  Opus 4.7 (1M context) · Claude Max
+  ▘▘ ▝▝    /private/tmp
 
-❯ hi claude! run `cal` and text me the output. use the default chat_id (no need to
-  specify).
+  Listening for channel messages from: server:imessage
+
+← imessage · +1XXXXXXXXXX: hi claude! run `cal` and text me the output. use the
+defaul…
 
 ⏺ Bash(cal)
-  ⎿       April 2026
+  ⎿       April 2026
      Su Mo Tu We Th Fr Sa
                1  2  3  4
      … +4 lines (ctrl+o to expand)
 
   Called imessage (ctrl+o to expand)
 
-⏺ Sent the April 2026 cal output to you.
-
-─────────────────────────────────────────────────────────────────────────────────────
-❯ 
-─────────────────────────────────────────────────────────────────────────────────────
-  -- INSERT --
+⏺ Sent the cal output (April 2026) to your default chat.
 ```
 
 ![Claude round-trip: prompt in, calendar out](docs/images/imessage-mcp-claude-cal-demo.jpeg)
@@ -128,10 +112,58 @@ Then:
 
 1. grant Full Disk Access to the host process that will run the binary
 2. populate `~/.config/dkdc-io/imessage/access.toml`
-3. point your client at `dkdc-io-imessage --stdio`
+3. register the MCP server with your LLM CLI
 
 Full setup and config snippets for Codex and Claude Code live in the
 [crate README](crates/imessage-mcp/README.md).
+
+## Register the MCP server
+
+Prefer the CLI over hand-editing config files.
+
+Codex:
+
+```sh
+codex mcp add imessage -- dkdc-io-imessage --stdio
+codex mcp list
+```
+
+Claude Code:
+
+```sh
+claude mcp add imessage dkdc-io-imessage --stdio
+claude mcp list
+```
+
+The server name (`imessage`) becomes the MCP namespace in the tool list:
+`imessage.reply`, `imessage.list_messages`, `imessage.read_message`.
+
+To enable inbound-message push:
+
+- Codex: nothing extra. The fork's inbox watcher handles it when `CODEX_CHANNEL_DIR` is set.
+- Claude Code: add `--dangerously-load-development-channels server:imessage` to the `claude` invocation. This is an experimental flag. It opts the session into the channel surface so `dkdc-io-imessage --watch` can push `notifications/claude/channel` events that render as `← imessage · <handle>: <text>`.
+
+Direct edit works too, for reference:
+
+```toml
+# ~/.codex/config.toml
+[mcp_servers.imessage]
+command = "dkdc-io-imessage"
+args = ["--stdio"]
+```
+
+```json
+// ~/.claude.json
+{
+  "mcpServers": {
+    "imessage": {
+      "type": "stdio",
+      "command": "dkdc-io-imessage",
+      "args": ["--stdio"]
+    }
+  }
+}
+```
 
 Codex note: the `codex mcp add` flow in this repo uses Cody's fork at
 <https://github.com/lostmygithubaccount/codex>. Upstream OpenAI Codex does not
