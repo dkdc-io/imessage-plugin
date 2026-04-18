@@ -46,7 +46,8 @@ fn seed_empty_chat_db(path: &std::path::Path) {
         CREATE TABLE IF NOT EXISTS message (
             ROWID INTEGER PRIMARY KEY,
             guid TEXT, text TEXT, attributedBody BLOB,
-            date INTEGER, is_from_me INTEGER, account TEXT, handle_id INTEGER
+            date INTEGER, is_from_me INTEGER, account TEXT, handle_id INTEGER,
+            service TEXT, cache_has_attachments INTEGER
         );
         CREATE TABLE IF NOT EXISTS handle (ROWID INTEGER PRIMARY KEY, id TEXT);
         CREATE TABLE IF NOT EXISTS chat (ROWID INTEGER PRIMARY KEY, guid TEXT, style INTEGER);

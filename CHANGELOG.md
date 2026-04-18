@@ -4,6 +4,31 @@ All notable changes to `dkdc-io-imessage` are documented here. Format loosely
 follows [Keep a Changelog](https://keepachangelog.com/) and the project uses
 [SemVer](https://semver.org/).
 
+## [0.2.0] - 2026-04-18
+
+### Added
+
+- Automatic push mode. The MCP server now runs a background watcher on
+  `~/Library/Messages/chat.db` by default and pushes every new allowlisted
+  inbound iMessage into the session as a `notifications/claude/channel`
+  JSON-RPC notification. Claude Code and the codex fork both consume this
+  method, so no client-side wiring is needed beyond the normal MCP registration.
+- Codex filesystem channel support. When `CODEX_CHANNEL_DIR` is set, the
+  watcher *also* drops a JSON envelope under `<dir>/inbox/` in the shape the
+  codex fork expects (`from`, `text`, `ts`, `kind = "brief"`, hard-link atomic
+  write, spec filename).
+- `--watch` / `--no-watch` CLI flags and `DKDC_IO_WATCH` env var to control
+  the watcher. Default is on.
+- `DKDC_IO_WATCH_INTERVAL_MS` env var (default 750, min 100) to tune the
+  poll cadence.
+- Integration tests at `tests/watch_push.rs` exercising the MCP push path,
+  the codex filesystem envelope path, and the allowlist gate.
+
+### Changed
+
+- Repo renamed from `dkdc-io/imessage-mcp` to `dkdc-io/imessage`. Crate
+  and binary names stay `dkdc-io-imessage`.
+
 ## [0.1.6] - 2026-04-18
 
 ### Changed

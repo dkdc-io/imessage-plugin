@@ -28,5 +28,6 @@ pub mod db;
 pub mod mcp;
 pub mod send;
 pub mod tools;
+pub mod watch;
 
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");

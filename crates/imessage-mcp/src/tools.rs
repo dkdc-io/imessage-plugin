@@ -47,7 +47,7 @@ fn fail_closed_if_empty(access: &Access) -> Result<()> {
         bail!(
             "allowlist is empty. dkdc-io-imessage is fail-closed by default. \
              Edit {path} to add `self.chat_id` and/or `allow_from` handles, then retry. \
-             See https://github.com/dkdc-io/imessage-mcp for setup."
+             See https://github.com/dkdc-io/imessage for setup."
         );
     }
     Ok(())

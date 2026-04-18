@@ -1,4 +1,4 @@
-# imessage-mcp
+# imessage
 
 Text your coding agent. Get a reply back in Messages.
 
@@ -8,6 +8,7 @@ Code, or any stdio MCP client at one binary and it can:
 - send iMessage with `reply(chat_id, text)`
 - search your chats with `list_messages(query, limit)`
 - fetch one message by GUID with `read_message(id)`
+- auto-inject inbound iMessages into the LLM's session as channel events
 
 Local allowlist only. Empty config fails closed.
 
@@ -109,6 +110,7 @@ p__imessage__reply,Bash'
 - one binary: `cargo install dkdc-io-imessage`
 - no framework lock-in: Codex CLI, Claude Code, or any stdio MCP client
 - real Messages integration: send via AppleScript, read from `chat.db`
+- live push: incoming iMessages auto-inject as channel notifications
 - tight surface area: three tools, no extra daemon, no event bus
 - fail closed: no allowlist means no access
 

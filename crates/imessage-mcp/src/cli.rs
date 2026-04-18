@@ -1,18 +1,27 @@
-//! Binary entry point. No clap — one flag surface: `--stdio` (the default) runs
-//! the MCP server on stdin/stdout. Without args we also run the server, since
-//! that is the only thing this binary does.
+//! Binary entry point. Flag surface:
+//! - `--stdio` (default): run the MCP server on stdin/stdout.
+//! - `--watch` / `--no-watch`: enable/disable push-mode watcher. Watch is ON
+//!   by default when running as an MCP server, since the whole point of the
+//!   binary is for inbound iMessages to land in the session automatically.
+//!   Set `DKDC_IO_WATCH=0` or pass `--no-watch` to suppress.
 
 use std::process::ExitCode;
 
+use crate::mcp::ServeOptions;
+
 pub fn run() -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    match args
-        .iter()
-        .map(String::as_str)
-        .collect::<Vec<_>>()
-        .as_slice()
-    {
-        [] | ["--stdio"] => run_server(),
+    let mut rest: Vec<&str> = Vec::new();
+    let mut watch_override: Option<bool> = None;
+    for a in &args {
+        match a.as_str() {
+            "--watch" => watch_override = Some(true),
+            "--no-watch" => watch_override = Some(false),
+            other => rest.push(other),
+        }
+    }
+    match rest.as_slice() {
+        [] | ["--stdio"] => run_server(resolve_watch(watch_override)),
         ["-h"] | ["--help"] => {
             print_help();
             ExitCode::SUCCESS
@@ -30,25 +39,46 @@ pub fn run() -> ExitCode {
     }
 }
 
+/// Resolve the effective `watch` setting. Default ON. `--watch`/`--no-watch`
+/// override env. `DKDC_IO_WATCH=0` or `DKDC_IO_WATCH=false` disables when no
+/// CLI override is present.
+fn resolve_watch(cli_override: Option<bool>) -> bool {
+    if let Some(v) = cli_override {
+        return v;
+    }
+    !matches!(
+        std::env::var("DKDC_IO_WATCH").ok().as_deref(),
+        Some("0") | Some("false") | Some("no")
+    )
+}
+
 fn print_help() {
     println!(
         r#"dkdc-io-imessage {version}
 
 iMessage MCP server. Exposes reply / list_messages / read_message tools to an
-MCP client (Codex CLI, Claude Code, ...).
+MCP client (Codex CLI, Claude Code, ...) AND pushes inbound iMessages into the
+session as MCP channel notifications so the LLM reacts without polling.
 
 Usage:
-  dkdc-io-imessage [--stdio]    run the MCP server on stdin/stdout (default)
-  dkdc-io-imessage check        print the loaded allowlist and config paths
-  dkdc-io-imessage --version    print version and exit
-  dkdc-io-imessage --help       show this help
+  dkdc-io-imessage [--stdio] [--watch|--no-watch]
+                              run the MCP server on stdin/stdout (default).
+                              Watch mode is ON by default — it tails chat.db
+                              and emits notifications/claude/channel for new
+                              allowlisted inbound messages.
+  dkdc-io-imessage check      print the loaded allowlist and config paths
+  dkdc-io-imessage --version  print version and exit
+  dkdc-io-imessage --help     show this help
 
 Config:
   ~/.config/dkdc-io/imessage/access.toml     allowlist
   DKDC_IO_ACCESS_FILE=<path>                 override the path
   DKDC_IO_CHAT_DB=<path>                     override chat.db path (tests)
+  DKDC_IO_WATCH=0                            disable watch mode
+  DKDC_IO_WATCH_INTERVAL_MS=<n>              poll interval (default 750)
+  CODEX_CHANNEL_DIR=<path>                   also drop codex envelopes here
 
-See the README at https://github.com/dkdc-io/imessage-mcp for setup.
+See the README at https://github.com/dkdc-io/imessage for setup.
 "#,
         version = crate::VERSION,
     );
@@ -96,7 +126,7 @@ fn check_access() -> ExitCode {
     ExitCode::SUCCESS
 }
 
-fn run_server() -> ExitCode {
+fn run_server(watch: bool) -> ExitCode {
     init_tracing();
     let rt = match tokio::runtime::Builder::new_current_thread()
         .enable_all()
@@ -108,7 +138,8 @@ fn run_server() -> ExitCode {
             return ExitCode::FAILURE;
         }
     };
-    match rt.block_on(crate::mcp::serve()) {
+    let opts = ServeOptions { watch };
+    match rt.block_on(crate::mcp::serve_with(opts)) {
         Ok(()) => ExitCode::SUCCESS,
         Err(err) => {
             eprintln!("server error: {err}");

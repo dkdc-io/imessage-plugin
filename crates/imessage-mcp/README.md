@@ -125,14 +125,52 @@ After setup:
 - "what did I text Friend today?"
 - "read the last message from my note-to-self chat"
 
+## Automatic push mode
+
+`dkdc-io-imessage` runs a background watcher by default when started as an MCP
+server. Every new allowlisted inbound iMessage is pushed into the LLM session
+the moment it lands in `chat.db`, so you can just text the Mac and the agent
+reacts — no `list_messages` poll loop required.
+
+How it surfaces:
+
+- **Claude Code / codex fork**: the watcher emits a
+  `notifications/claude/channel` JSON-RPC notification over the same stdio
+  transport the MCP server is already using. Claude Code renders it as a
+  `<channel source="imessage" ...>` block; the codex fork forwards it through
+  the TUI event path as a new inbound turn.
+- **Codex filesystem channel**: if `CODEX_CHANNEL_DIR` is set, the watcher
+  *also* drops a JSON envelope under `$CODEX_CHANNEL_DIR/inbox/`. That is the
+  fork's other channel surface; useful when codex is driven without MCP.
+
+The watcher respects the same allowlist as the tools. Non-allowlisted senders
+are never pushed. Groups and SMS are dropped for now — only
+`service = 'iMessage'` and `chat.style = 45` (DM) rows flow through.
+
+Disable explicitly:
+
+```sh
+dkdc-io-imessage --stdio --no-watch       # one shot
+export DKDC_IO_WATCH=0                    # session-wide
+```
+
+Tune the poll cadence:
+
+```sh
+export DKDC_IO_WATCH_INTERVAL_MS=750       # default
+```
+
 ## Config
 
-| Env var                 | Purpose                                                 |
-|-------------------------|---------------------------------------------------------|
-| `DKDC_IO_ACCESS_FILE`   | Override the allowlist TOML path.                       |
-| `DKDC_IO_STATE_DIR`     | Override the config dir (default `~/.config/dkdc-io/imessage`). |
-| `DKDC_IO_CHAT_DB`       | Override the chat.db path. Useful for tests.            |
-| `DKDC_IO_LOG`           | Tracing filter (`warn`, `info`, `debug`, ...).          |
+| Env var                      | Purpose                                                 |
+|------------------------------|---------------------------------------------------------|
+| `DKDC_IO_ACCESS_FILE`        | Override the allowlist TOML path.                       |
+| `DKDC_IO_STATE_DIR`          | Override the config dir (default `~/.config/dkdc-io/imessage`). |
+| `DKDC_IO_CHAT_DB`            | Override the chat.db path. Useful for tests.            |
+| `DKDC_IO_LOG`                | Tracing filter (`warn`, `info`, `debug`, ...).          |
+| `DKDC_IO_WATCH`              | `0`/`false`/`no` disables the push watcher.             |
+| `DKDC_IO_WATCH_INTERVAL_MS`  | Poll cadence in ms (default `750`, min `100`).          |
+| `CODEX_CHANNEL_DIR`          | When set, also drop codex envelopes under `<dir>/inbox/`. |
 
 ## Security posture
 

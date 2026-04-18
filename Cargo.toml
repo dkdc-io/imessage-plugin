@@ -3,10 +3,10 @@ resolver = "2"
 members = ["crates/imessage-mcp"]
 
 [workspace.package]
-version = "0.1.6"
+version = "0.2.0"
 edition = "2024"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/dkdc-io/imessage-mcp"
+repository = "https://github.com/dkdc-io/imessage"
 authors = ["Cody <cody@dkdc.io>"]
 
 [profile.release]

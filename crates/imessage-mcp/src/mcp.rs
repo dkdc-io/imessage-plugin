@@ -24,7 +24,19 @@ pub const DEFAULT_PROTOCOL_VERSION: &str = "2024-11-05";
 
 const JSONRPC: &str = "2.0";
 
+/// Runtime options for [`serve`]. `watch` enables the push-mode side-channel
+/// that tails `chat.db` and emits `notifications/claude/channel` for new
+/// allowlisted inbound messages.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct ServeOptions {
+    pub watch: bool,
+}
+
 pub async fn serve() -> Result<()> {
+    serve_with(ServeOptions::default()).await
+}
+
+pub async fn serve_with(opts: ServeOptions) -> Result<()> {
     let conn = crate::db::open()?;
     let access = crate::access::load();
     if access.is_empty() {
@@ -33,12 +45,31 @@ pub async fn serve() -> Result<()> {
             .unwrap_or_else(|_| "(unknown)".into());
         tracing::warn!(access = %path, "dkdc-io-imessage starting with empty allowlist; all tool calls will fail closed");
     }
+    let self_handles = {
+        let auto = crate::db::self_handles(&conn).unwrap_or_default();
+        let mut out: std::collections::HashSet<String> = auto.into_iter().collect();
+        for h in &access.self_handles {
+            out.insert(h.to_lowercase());
+        }
+        out
+    };
     let state = Arc::new(State::new(conn));
-    drive(state, access).await
+    drive(state, access, opts, self_handles).await
 }
 
-async fn drive(state: Arc<State>, access: Access) -> Result<()> {
+async fn drive(
+    state: Arc<State>,
+    access: Access,
+    opts: ServeOptions,
+    self_handles: std::collections::HashSet<String>,
+) -> Result<()> {
     let (out_tx, mut out_rx) = mpsc::unbounded_channel::<Value>();
+    let shutdown = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+
+    if opts.watch {
+        let cfg = crate::watch::Config::from_env(self_handles);
+        crate::watch::spawn(out_tx.clone(), cfg, shutdown.clone());
+    }
 
     let writer = tokio::spawn(async move {
         let mut stdout = tokio::io::stdout();
@@ -55,6 +86,7 @@ async fn drive(state: Arc<State>, access: Access) -> Result<()> {
         let access = access.clone();
         let state = state.clone();
         let out_tx = out_tx.clone();
+        let shutdown = shutdown.clone();
         tokio::spawn(async move {
             let stdin = tokio::io::stdin();
             let mut lines = BufReader::new(stdin).lines();
@@ -80,6 +112,9 @@ async fn drive(state: Arc<State>, access: Access) -> Result<()> {
                     }
                 });
             }
+            // stdin EOF: signal the watcher (if any) to drop its out_tx clone
+            // so the writer sees rx close and exits.
+            shutdown.store(true, std::sync::atomic::Ordering::Release);
             anyhow::Ok(())
         })
     };
