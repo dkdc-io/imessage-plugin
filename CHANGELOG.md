@@ -4,6 +4,18 @@ All notable changes to `dkdc-io-imessage` are documented here. Format loosely
 follows [Keep a Changelog](https://keepachangelog.com/) and the project uses
 [SemVer](https://semver.org/).
 
+## [0.1.2] - 2026-04-18
+
+### Added
+
+- Prior-art attribution to Anthropic's official iMessage plugin for Claude
+  Code ([`anthropics/claude-plugins-official/external_plugins/imessage`][upstream]),
+  the TypeScript/Bun implementation that pioneered the chat.db + AppleScript +
+  allowlist shape. Acknowledgment lands in both READMEs and in the crate's
+  top-level module docstring.
+
+[upstream]: https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/imessage
+
 ## [0.1.1] - 2026-04-17
 
 ### Fixed

@@ -53,6 +53,26 @@ cargo test --workspace
 
 All three run clean on macOS.
 
+## Prior art
+
+This plugin is an independent Rust implementation inspired by Anthropic's
+official iMessage plugin for Claude Code
+([anthropics/claude-plugins-official/external_plugins/imessage][upstream]),
+a TypeScript/Bun server that pioneered the shape we follow: stdio MCP, read
+`~/Library/Messages/chat.db` directly, send via AppleScript, gate with a
+local allowlist, bypass the gate for self-chat. Credit for the shape goes
+there. Bugs and design choices here are ours.
+
+Differences worth knowing about if you're evaluating both:
+
+- **Rust**, single static binary via `cargo install` (the upstream uses Bun).
+- **LLM-CLI-agnostic**: one server, three tools, drop-in for Codex CLI,
+  Claude Code, or any MCP-over-stdio client.
+- Minimal tool surface (`reply`, `list_messages`, `read_message`). No
+  channel-event push model; clients poll via `list_messages`.
+
+[upstream]: https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/imessage
+
 ## License
 
 Dual MIT OR Apache-2.0.

@@ -129,6 +129,16 @@ After setup:
   body is a fixed string. There is no shell or string-concatenation path for
   user-controlled input. See `tests/injection.rs` for the anti-regression.
 
+## Prior art
+
+Inspired by Anthropic's official iMessage plugin for Claude Code
+([anthropics/claude-plugins-official/external_plugins/imessage][upstream]),
+which pioneered the chat.db + AppleScript + allowlist shape. This is an
+independent Rust implementation with an LLM-CLI-agnostic surface (Codex CLI,
+Claude Code, or any MCP-over-stdio client).
+
+[upstream]: https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/imessage
+
 ## License
 
 MIT OR Apache-2.0.
