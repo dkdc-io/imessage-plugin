@@ -4,6 +4,16 @@ All notable changes to `dkdc-io-imessage` are documented here. Format loosely
 follows [Keep a Changelog](https://keepachangelog.com/) and the project uses
 [SemVer](https://semver.org/).
 
+## [0.1.5] - 2026-04-18
+
+### Added
+
+- Ported the old Netsky `demo-claude-imessage.sh` flow into an opt-in live
+  integration test at `crates/dkdc-io-imessage/tests/claude_parity.rs`, with
+  prerequisites and run instructions in `tests/claude_parity.md`.
+- Added a repo README "Same plugin, Claude Code" section with the captured
+  Claude TUI round-trip, to match the Codex demo block.
+
 ## [0.1.4] - 2026-04-18
 
 ### Changed

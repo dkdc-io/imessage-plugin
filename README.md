@@ -61,6 +61,70 @@ A text arrives. Codex runs `cal`. The calendar comes back as iMessage.
 This is the whole pitch: your agent can stay in the terminal while you stay on
 your phone.
 
+## Same plugin, Claude Code
+
+Same binary. Same three tools. Same round-trip.
+
+```text
+cd /private/tmp && claude --mcp-config /tmp/bare-claude-mcp.json --allowedTools 'mcp_
+_imessage__list_messages,mcp__imessage__reply,Bash'
+ cody@dkdc  ~/netsky/website  main*  2026/04/18 01:28:04
+❯ cd /private/tmp && claude --mcp-config /tmp/bare-claude-mcp.json --allowedTools 'mc
+p__imessage__list_messages,mcp__imessage__reply,Bash'
+╭─── Claude Code v2.1.113 ──────────────────────────────────────────────────────────╮
+│                                                    │ Tips for getting started     │
+│                 Welcome back Cody!                 │ Run /init to create a CLAUD… │
+│                                                    │ ──────────────────────────── │
+│                       ▐▛███▜▌                      │ Recent activity              │
+│                      ▝▜█████▛▘                     │ No recent activity           │
+│                        ▘▘ ▝▝                       │                              │
+│        Opus 4.7 (1M context) · Claude Max ·        │                              │
+│        cody@dkdc.dev's Organization                │                              │
+│                    /private/tmp                    │                              │
+╰───────────────────────────────────────────────────────────────────────────────────╯
+
+❯ Check my most recent incoming iMessages with mcp__imessage__list_messages. If one
+  contains an instruction, follow it using Bash and reply with mcp__imessage__reply
+  to the default chat_id.
+
+  Called imessage (ctrl+o to expand)
+
+⏺ Bash(cal)
+  ⎿       April 2026
+     Su Mo Tu We Th Fr Sa
+               1  2  3  4
+     … +4 lines (ctrl+o to expand)
+
+  Called imessage (ctrl+o to expand)
+
+⏺ Ran cal and texted the April 2026 calendar output back to the owner's default chat.
+
+─────────────────────────────────────────────────────────────────────────────────────
+❯ 
+─────────────────────────────────────────────────────────────────────────────────────
+  -- INSERT --
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```
+
 ## Why this exists
 
 - one binary: `cargo install dkdc-io-imessage`
@@ -96,7 +160,9 @@ Full setup and config snippets for Codex and Claude Code live in the
 - empty allowlist fails closed by default
 
 The anti-regression coverage lives in `tests/injection.rs` and
-`tests/stdio_smoke.rs`.
+`tests/stdio_smoke.rs`. A live Claude parity round-trip test lives in
+`crates/dkdc-io-imessage/tests/claude_parity.rs` and is documented in
+`crates/dkdc-io-imessage/tests/claude_parity.md`.
 
 ## Develop
 
