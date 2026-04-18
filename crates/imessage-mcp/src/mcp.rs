@@ -19,7 +19,7 @@ use tokio::sync::mpsc;
 use crate::access::Access;
 use crate::tools::{self, State};
 
-pub const SERVER_NAME: &str = "dkdc-io-imessage";
+pub const SERVER_NAME: &str = "imessage-mcp";
 pub const DEFAULT_PROTOCOL_VERSION: &str = "2024-11-05";
 
 const JSONRPC: &str = "2.0";
@@ -31,7 +31,7 @@ pub async fn serve() -> Result<()> {
         let path = crate::access::access_file()
             .map(|p| p.display().to_string())
             .unwrap_or_else(|_| "(unknown)".into());
-        tracing::warn!(access = %path, "dkdc-io-imessage starting with empty allowlist; all tool calls will fail closed");
+        tracing::warn!(access = %path, "imessage-mcp starting with empty allowlist; all tool calls will fail closed");
     }
     let state = Arc::new(State::new(conn));
     drive(state, access).await

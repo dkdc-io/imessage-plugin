@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `dkdc-io-imessage` are documented here. Format loosely
+All notable changes to `imessage-mcp` are documented here. Format loosely
 follows [Keep a Changelog](https://keepachangelog.com/) and the project uses
 [SemVer](https://semver.org/).
 
@@ -8,16 +8,25 @@ follows [Keep a Changelog](https://keepachangelog.com/) and the project uses
 
 ### Changed
 
-- docs: real end-to-end claude capture + round-trip screenshot + scripts/
+- rename the repo and crate from `imessage-plugin` / `dkdc-io-imessage` to
+  `imessage-mcp` / `imessage-mcp`
+- update docs, screenshots, scripts, and public URLs to the new name
+- docs: real end-to-end Claude capture + round-trip screenshot + scripts/
+- note the Codex fork requirement for `codex mcp add`
+- make the prior-art arc explicit: upstream TypeScript/Bun MCP server, direct
+  port, typedstream truncation bug, echo-tracker bug, fixes, then Rust rewrite
+  for correctness
+- the old `dkdc-io-imessage` crate remains published on crates.io and is not
+  yanked
 
 ## [0.1.5] - 2026-04-18
 
 ### Added
 
 - Ported the old Netsky `demo-claude-imessage.sh` flow into an opt-in live
-  integration test at `crates/dkdc-io-imessage/tests/claude_parity.rs`, with
+  integration test at `crates/imessage-mcp/tests/claude_parity.rs`, with
   prerequisites and run instructions in `tests/claude_parity.md`.
-- Added a repo README "Same plugin, Claude Code" section with the captured
+- Added a repo README "Same MCP server, Claude Code" section with the captured
   Claude TUI round-trip, to match the Codex demo block.
 
 ## [0.1.4] - 2026-04-18
@@ -33,15 +42,15 @@ follows [Keep a Changelog](https://keepachangelog.com/) and the project uses
 ### Added
 
 - README install section now leads with the
-  `curl -LsSf https://dkdc.sh/imessage-plugin/install.sh | sh`
+  `curl -LsSf https://dkdc.sh/imessage-mcp/install.sh | sh`
   one-liner for users who do not already have `cargo`. The script installs
-  `rustup` if absent, then runs `cargo install dkdc-io-imessage`.
+  `rustup` if absent, then runs `cargo install imessage-mcp`.
 
 ## [0.1.2] - 2026-04-18
 
 ### Added
 
-- Prior-art attribution to Anthropic's official iMessage plugin for Claude
+- Prior-art attribution to Anthropic's official iMessage MCP server for Claude
   Code ([`anthropics/claude-plugins-official/external_plugins/imessage`][upstream]),
   the TypeScript/Bun implementation that pioneered the chat.db + AppleScript +
   allowlist shape. Acknowledgment lands in both READMEs and in the crate's

@@ -15,7 +15,7 @@ const TIMEOUT_ENV: &str = "DKDC_IO_CLAUDE_LIVE_TIMEOUT_SECS";
 const SETTLE_ENV: &str = "DKDC_IO_CLAUDE_SETTLE_SECS";
 const MCP_CONFIG_NAME: &str = "bare-claude-mcp.json";
 const CAPTURE_NAME: &str = "claude-tui-capture.txt";
-const SESSION_NAME: &str = "dkdc-io-imessage-claude-test";
+const SESSION_NAME: &str = "imessage-mcp-claude-test";
 const DEFAULT_TIMEOUT_SECS: u64 = 45;
 const DEFAULT_SETTLE_SECS: u64 = 3;
 const TRIGGER: &str =
@@ -108,17 +108,17 @@ fn write_mcp_config(path: &Path) {
 }
 
 fn bin_path() -> PathBuf {
-    PathBuf::from(env!("CARGO_BIN_EXE_dkdc-io-imessage"))
+    PathBuf::from(env!("CARGO_BIN_EXE_imessage-mcp"))
 }
 
 fn default_handle() -> String {
     let out = Command::new(bin_path())
         .arg("check")
         .output()
-        .expect("run dkdc-io-imessage check");
+        .expect("run imessage-mcp check");
     assert!(
         out.status.success(),
-        "`dkdc-io-imessage check` failed: {}",
+        "`imessage-mcp check` failed: {}",
         String::from_utf8_lossy(&out.stderr)
     );
     let stdout = String::from_utf8_lossy(&out.stdout);
@@ -128,7 +128,7 @@ fn default_handle() -> String {
         .unwrap_or("(unset)");
     assert_ne!(
         value, "(unset)",
-        "self.chat_id is unset. Configure ~/.config/dkdc-io/imessage/access.toml, then rerun `dkdc-io-imessage check`."
+        "self.chat_id is unset. Configure ~/.config/dkdc-io/imessage/access.toml, then rerun `imessage-mcp check`."
     );
     let handle = value.rsplit(';').next().unwrap_or_default().trim();
     assert!(

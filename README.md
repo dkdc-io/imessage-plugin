@@ -1,8 +1,8 @@
-# imessage-plugin
+# imessage-mcp
 
 Text your coding agent. Get a reply back in Messages.
 
-`dkdc-io-imessage` is a Rust MCP server for macOS. Point Codex CLI, Claude
+`imessage-mcp` is a Rust MCP server for macOS. Point Codex CLI, Claude
 Code, or any stdio MCP client at one binary and it can:
 
 - send iMessage with `reply(chat_id, text)`
@@ -11,9 +11,9 @@ Code, or any stdio MCP client at one binary and it can:
 
 Local allowlist only. Empty config fails closed.
 
-[crates.io](https://crates.io/crates/dkdc-io-imessage) ·
-[docs](crates/dkdc-io-imessage/README.md) ·
-[install script](https://dkdc.sh/imessage-plugin/install.sh)
+[crates.io](https://crates.io/crates/imessage-mcp) ·
+[docs](crates/imessage-mcp/README.md) ·
+[install script](https://dkdc.sh/imessage-mcp/install.sh)
 
 ## A live round-trip
 
@@ -56,12 +56,12 @@ A text arrives. Codex runs `cal`. The calendar comes back as iMessage.
 • Sent this to your default chat.
 ```
 
-![Round-trip: prompt in, calendar out](docs/images/dkdc-io-imessage-codex-cal-demo.jpeg)
+![Round-trip: prompt in, calendar out](docs/images/imessage-mcp-codex-cal-demo.jpeg)
 
 This is the whole pitch: your agent can stay in the terminal while you stay on
 your phone.
 
-## Same plugin, Claude Code
+## Same MCP server, Claude Code
 
 Same binary. Same three tools. Same round-trip.
 
@@ -102,11 +102,11 @@ p__imessage__reply,Bash'
   -- INSERT --
 ```
 
-![Claude round-trip: prompt in, calendar out](docs/images/dkdc-io-imessage-claude-cal-demo.jpeg)
+![Claude round-trip: prompt in, calendar out](docs/images/imessage-mcp-claude-cal-demo.jpeg)
 
 ## Why this exists
 
-- one binary: `cargo install dkdc-io-imessage`
+- one binary: `cargo install imessage-mcp`
 - no framework lock-in: Codex CLI, Claude Code, or any stdio MCP client
 - real Messages integration: send via AppleScript, read from `chat.db`
 - tight surface area: three tools, no extra daemon, no event bus
@@ -116,20 +116,24 @@ p__imessage__reply,Bash'
 
 ```sh
 # no rust? one line:
-curl -LsSf https://dkdc.sh/imessage-plugin/install.sh | sh
+curl -LsSf https://dkdc.sh/imessage-mcp/install.sh | sh
 
 # already have cargo:
-cargo install dkdc-io-imessage
+cargo install imessage-mcp
 ```
 
 Then:
 
 1. grant Full Disk Access to the host process that will run the binary
 2. populate `~/.config/dkdc-io/imessage/access.toml`
-3. point your client at `dkdc-io-imessage --stdio`
+3. point your client at `imessage-mcp --stdio`
 
 Full setup and config snippets for Codex and Claude Code live in the
-[crate README](crates/dkdc-io-imessage/README.md).
+[crate README](crates/imessage-mcp/README.md).
+
+Codex note: the `codex mcp add` flow in this repo uses Cody's fork at
+<https://github.com/lostmygithubaccount/codex>. Upstream OpenAI Codex does not
+ship that command today.
 
 ## Security posture
 
@@ -140,8 +144,8 @@ Full setup and config snippets for Codex and Claude Code live in the
 
 The anti-regression coverage lives in `tests/injection.rs` and
 `tests/stdio_smoke.rs`. A live Claude parity round-trip test lives in
-`crates/dkdc-io-imessage/tests/claude_parity.rs` and is documented in
-`crates/dkdc-io-imessage/tests/claude_parity.md`.
+`crates/imessage-mcp/tests/claude_parity.rs` and is documented in
+`crates/imessage-mcp/tests/claude_parity.md`.
 
 ## Develop
 
@@ -153,12 +157,14 @@ cargo test --workspace
 
 ## Prior art
 
-This is an independent Rust implementation inspired by Anthropic's official
-iMessage plugin for Claude Code
-([anthropics/claude-plugins-official/external_plugins/imessage][upstream]).
-That project established the shape: stdio MCP, `chat.db` reads, AppleScript
-send, local allowlist. This repo keeps that shape and ships it as one Rust
-binary for any MCP-over-stdio client.
+Anthropic shipped the original TypeScript/Bun iMessage MCP server for Claude
+Code ([anthropics/claude-plugins-official/external_plugins/imessage][upstream]).
+We first ported that shape directly. Then two correctness bugs surfaced:
+typedstream parsing truncated messages above roughly 130 bytes, and the
+echo-tracker could re-surface outbound replies as inbound messages. Those bugs
+were fixed, then the project was rewritten in Rust for correctness, not speed.
+The shape stayed the same: stdio MCP, `chat.db` reads, AppleScript send, local
+allowlist.
 
 [upstream]: https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/imessage
 

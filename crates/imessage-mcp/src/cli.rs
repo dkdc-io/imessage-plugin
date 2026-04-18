@@ -18,7 +18,7 @@ pub fn run() -> ExitCode {
             ExitCode::SUCCESS
         }
         ["-V"] | ["--version"] => {
-            println!("dkdc-io-imessage {}", crate::VERSION);
+            println!("imessage-mcp {}", crate::VERSION);
             ExitCode::SUCCESS
         }
         ["check"] => check_access(),
@@ -32,23 +32,23 @@ pub fn run() -> ExitCode {
 
 fn print_help() {
     println!(
-        r#"dkdc-io-imessage {version}
+        r#"imessage-mcp {version}
 
-iMessage MCP plugin. Exposes reply / list_messages / read_message tools to an
+iMessage MCP server. Exposes reply / list_messages / read_message tools to an
 MCP client (Codex CLI, Claude Code, ...).
 
 Usage:
-  dkdc-io-imessage [--stdio]    run the MCP server on stdin/stdout (default)
-  dkdc-io-imessage check        print the loaded allowlist and config paths
-  dkdc-io-imessage --version    print version and exit
-  dkdc-io-imessage --help       show this help
+  imessage-mcp [--stdio]    run the MCP server on stdin/stdout (default)
+  imessage-mcp check        print the loaded allowlist and config paths
+  imessage-mcp --version    print version and exit
+  imessage-mcp --help       show this help
 
 Config:
   ~/.config/dkdc-io/imessage/access.toml     allowlist
   DKDC_IO_ACCESS_FILE=<path>                 override the path
   DKDC_IO_CHAT_DB=<path>                     override chat.db path (tests)
 
-See the README at https://github.com/dkdc-io/imessage-plugin for setup.
+See the README at https://github.com/dkdc-io/imessage-mcp for setup.
 "#,
         version = crate::VERSION,
     );

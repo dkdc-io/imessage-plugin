@@ -17,7 +17,7 @@ mkdir -p "$CHANNEL_DIR/inbox" "$CHANNEL_DIR/outbox" "$CHANNEL_DIR/processed"
 
 tmux new-session -d -s "$SESSION" -x 120 -y 40
 tmux send-keys -t "$SESSION" \
-  "cd /private/tmp && CODEX_CHANNEL_DIR=$CHANNEL_DIR codex --dangerously-bypass-approvals-and-sandbox -C /private/tmp -c 'mcp_servers={imessage={command=\"dkdc-io-imessage\",args=[\"--stdio\"]}}'" \
+  "cd /private/tmp && CODEX_CHANNEL_DIR=$CHANNEL_DIR codex --dangerously-bypass-approvals-and-sandbox -C /private/tmp -c 'mcp_servers={imessage={command=\"imessage-mcp\",args=[\"--stdio\"]}}'" \
   Enter
 
 sleep "$SETTLE_SECS"

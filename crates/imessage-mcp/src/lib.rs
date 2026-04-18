@@ -1,4 +1,4 @@
-//! iMessage MCP plugin.
+//! iMessage MCP server.
 //!
 //! A standalone MCP server that exposes three tools to an LLM CLI (Codex CLI,
 //! Claude Code, or any JSON-RPC stdio MCP client):
@@ -12,10 +12,14 @@
 //!
 //! # Prior art
 //!
-//! Inspired by Anthropic's official iMessage plugin for Claude Code:
+//! Anthropic shipped the original TypeScript/Bun iMessage MCP server for Claude
+//! Code:
 //! <https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/imessage>
-//! (TypeScript/Bun). This is an independent Rust rewrite with an LLM-CLI-agnostic
-//! surface.
+//! We first ported that shape, then hit two correctness bugs: typedstream
+//! truncation on messages above roughly 130 bytes, and echo-tracker replay of
+//! outbound replies as inbound messages. Those bugs were fixed, then the
+//! project was rewritten in Rust for correctness, not speed. The current
+//! server keeps the same LLM-CLI-agnostic surface.
 
 pub mod access;
 pub mod attributed;

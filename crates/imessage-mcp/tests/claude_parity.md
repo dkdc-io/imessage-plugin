@@ -8,14 +8,14 @@ Prereqs:
 - macOS
 - `claude`, `tmux`, and `osascript` on `PATH`
 - Messages.app signed in
-- Full Disk Access for the host process that runs `dkdc-io-imessage`
+- Full Disk Access for the host process that runs `imessage-mcp`
 - `~/.config/dkdc-io/imessage/access.toml` configured with `self.chat_id`
-- `dkdc-io-imessage check` printing a non-`(unset)` `self.chat_id`
+- `imessage-mcp check` printing a non-`(unset)` `self.chat_id`
 
 Run:
 
 ```sh
-DKDC_IO_RUN_CLAUDE_LIVE_TEST=1 cargo test -p dkdc-io-imessage claude_can_round_trip_from_imessage -- --nocapture
+DKDC_IO_RUN_CLAUDE_LIVE_TEST=1 cargo test -p imessage-mcp claude_can_round_trip_from_imessage -- --nocapture
 ```
 
 Useful knobs:

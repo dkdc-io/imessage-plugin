@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Demo: claude TUI sits idle. A trigger iMessage arrives (self-sent via
-# osascript here to keep the demo one-shot). A tiny watcher polls the plugin's
+# osascript here to keep the demo one-shot). A tiny watcher polls the server's
 # list_messages via JSON-RPC, detects the new inbound message, and injects its
 # text as a prompt into the claude tmux pane. Claude reacts, runs cal, calls
 # imessage.reply.
@@ -18,7 +18,7 @@ if [[ ! -f "$MCP_CONFIG" ]]; then
   "mcpServers": {
     "imessage": {
       "type": "stdio",
-      "command": "dkdc-io-imessage",
+      "command": "imessage-mcp",
       "args": ["--stdio"]
     }
   }
@@ -26,10 +26,10 @@ if [[ ! -f "$MCP_CONFIG" ]]; then
 JSON
 fi
 
-HANDLE="$(dkdc-io-imessage check | awk '/^self\.chat_id:/ {print $2}' | sed 's/.*;-;//')"
+HANDLE="$(imessage-mcp check | awk '/^self\.chat_id:/ {print $2}' | sed 's/.*;-;//')"
 [[ -n "$HANDLE" ]] || { echo "could not resolve self handle" >&2; exit 1; }
 
-# Helper: fetch the N most recent messages from the plugin via MCP stdio.
+# Helper: fetch the N most recent messages from the server via MCP stdio.
 # Returns JSON array.
 list_messages_json() {
   local limit="${1:-5}"
@@ -38,7 +38,7 @@ list_messages_json() {
     sleep 0.3
     echo "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"list_messages\",\"arguments\":{\"limit\":${limit}}}}"
     sleep 0.6
-  ) | dkdc-io-imessage --stdio 2>/dev/null | \
+  ) | imessage-mcp --stdio 2>/dev/null | \
     awk '/"id":1/ {print; exit}' | \
     python3 -c 'import json,sys; d=json.loads(sys.stdin.read()); print(d["result"]["content"][0]["text"])'
 }

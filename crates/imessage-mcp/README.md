@@ -1,6 +1,6 @@
-# dkdc-io-imessage
+# imessage-mcp
 
-An iMessage MCP plugin. Lets an LLM CLI (Codex CLI, Claude Code, or any
+An iMessage MCP server. Lets an LLM CLI (Codex CLI, Claude Code, or any
 JSON-RPC-over-stdio MCP client) read and send iMessages on macOS.
 
 Three tools:
@@ -16,13 +16,13 @@ a pointer back to the config file.
 
 ```sh
 # no rust? one line:
-curl -LsSf https://dkdc.sh/imessage-plugin/install.sh | sh
+curl -LsSf https://dkdc.sh/imessage-mcp/install.sh | sh
 
 # already have cargo:
-cargo install dkdc-io-imessage
+cargo install imessage-mcp
 ```
 
-Either way you end up with the `dkdc-io-imessage` binary on your `$PATH`. The
+Either way you end up with the `imessage-mcp` binary on your `$PATH`. The
 first script installs `rustup` if it isn't present, then runs `cargo install`.
 
 ## macOS prerequisites
@@ -54,13 +54,13 @@ handles  = ["+15551234567", "you@icloud.com"]
 Verify with:
 
 ```sh
-dkdc-io-imessage check
+imessage-mcp check
 ```
 
 Empty allowlist is intentional. Any tool call returns:
 
 ```
-allowlist is empty. dkdc-io-imessage is fail-closed by default. Edit
+allowlist is empty. imessage-mcp is fail-closed by default. Edit
 ~/.config/dkdc-io/imessage/access.toml to add `self.chat_id` and/or
 `allow_from` handles, then retry.
 ```
@@ -72,15 +72,19 @@ allowlist is empty. dkdc-io-imessage is fail-closed by default. Edit
 Preferred path:
 
 ```sh
-codex mcp add imessage -- dkdc-io-imessage --stdio
+codex mcp add imessage -- imessage-mcp --stdio
 codex mcp list
 ```
+
+This uses Cody's fork at
+<https://github.com/lostmygithubaccount/codex>. Upstream OpenAI Codex does not
+ship `codex mcp add` today.
 
 Direct edit works too, for reference:
 
 ```toml
 [mcp_servers.imessage]
-command = "dkdc-io-imessage"
+command = "imessage-mcp"
 args    = ["--stdio"]
 ```
 
@@ -92,7 +96,7 @@ You should see `imessage` in the MCP list, with `reply`, `list_messages`, and
 Preferred path:
 
 ```sh
-claude mcp add imessage dkdc-io-imessage --stdio
+claude mcp add imessage imessage-mcp --stdio
 claude mcp list
 ```
 
@@ -104,7 +108,7 @@ Direct edit works too, for reference. Add to `~/.claude.json` (or per-project
   "mcpServers": {
     "imessage": {
       "type": "stdio",
-      "command": "dkdc-io-imessage",
+      "command": "imessage-mcp",
       "args": ["--stdio"]
     }
   }
@@ -143,11 +147,13 @@ After setup:
 
 ## Prior art
 
-Inspired by Anthropic's official iMessage plugin for Claude Code
-([anthropics/claude-plugins-official/external_plugins/imessage][upstream]),
-which pioneered the chat.db + AppleScript + allowlist shape. This is an
-independent Rust implementation with an LLM-CLI-agnostic surface (Codex CLI,
-Claude Code, or any MCP-over-stdio client).
+Anthropic shipped the original TypeScript/Bun iMessage MCP server for Claude
+Code ([anthropics/claude-plugins-official/external_plugins/imessage][upstream]).
+We first ported that shape, then hit two correctness bugs: typedstream
+truncation on messages above roughly 130 bytes, and echo-tracker replay of
+outbound replies as inbound messages. Those bugs were fixed, then the project
+was rewritten in Rust for correctness, not speed. The current server keeps the
+same chat.db + AppleScript + allowlist shape with an LLM-CLI-agnostic surface.
 
 [upstream]: https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/imessage
 
