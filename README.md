@@ -1,16 +1,73 @@
 # imessage-plugin
 
-An iMessage MCP plugin for any LLM CLI that speaks MCP over stdio —
-[Codex CLI](https://github.com/openai/codex),
-[Claude Code](https://docs.claude.com/en/docs/claude-code), or your own harness.
+Text your coding agent. Get a reply back in Messages.
 
-Install one binary, point your CLI at it, and the LLM can:
+`dkdc-io-imessage` is a Rust MCP server for macOS. Point Codex CLI, Claude
+Code, or any stdio MCP client at one binary and it can:
 
-- send iMessage via `reply(chat_id, text)`,
-- search your messages via `list_messages(query, limit)`,
-- fetch one message by GUID via `read_message(id)`.
+- send iMessage with `reply(chat_id, text)`
+- search your chats with `list_messages(query, limit)`
+- fetch one message by GUID with `read_message(id)`
 
-Gated by a local allowlist. Fail-closed by default.
+Local allowlist only. Empty config fails closed.
+
+[crates.io](https://crates.io/crates/dkdc-io-imessage) ·
+[docs](crates/dkdc-io-imessage/README.md) ·
+[install script](https://dkdc.sh/imessage-plugin/install.sh)
+
+## A live round-trip
+
+A text arrives. Codex runs `cal`. The calendar comes back as iMessage.
+
+```text
+╭─────────────────────────────────────────╮
+│ >_ OpenAI Codex (v0.0.0)                │
+│ model:       gpt-5.4                    │
+│ directory:   /private/tmp               │
+│ permissions: YOLO mode                  │
+╰─────────────────────────────────────────╯
+
+› channel envelope
+  from: owner
+  ts: 2026-04-18T00:50:58Z
+
+  hi codex! run `cal` and text me the output. use the default
+  chat_id (no need to specify).
+
+
+• Running cal locally, then I'll send the exact output to your
+  default iMessage chat.
+
+• Ran cal
+  └      April 2026
+    Su Mo Tu We Th Fr Sa
+              1  2  3  4
+     5  6  7  8  9 10 11
+    12 13 14 15 16 17 18
+    19 20 21 22 23 24 25
+    26 27 28 29 30
+
+• Sending the cal output to your default chat now.
+
+• Called
+  └ imessage.reply({"text":"     April 2026       \n..."})
+    {"chat_id": "any;-;+1XXXXXXXXXX", "sent": true}
+
+• Sent this to your default chat.
+```
+
+![Round-trip: prompt in, calendar out](docs/images/dkdc-io-imessage-codex-cal-demo.jpeg)
+
+This is the whole pitch: your agent can stay in the terminal while you stay on
+your phone.
+
+## Why this exists
+
+- one binary: `cargo install dkdc-io-imessage`
+- no framework lock-in: Codex CLI, Claude Code, or any stdio MCP client
+- real Messages integration: send via AppleScript, read from `chat.db`
+- tight surface area: three tools, no extra daemon, no event bus
+- fail closed: no allowlist means no access
 
 ## Install
 
@@ -22,34 +79,24 @@ curl -LsSf https://dkdc.sh/imessage-plugin/install.sh | sh
 cargo install dkdc-io-imessage
 ```
 
-The first script installs `rustup` if it's missing, then runs `cargo install
-dkdc-io-imessage`. Either way you end up with the `dkdc-io-imessage` binary
-on your `$PATH`.
+Then:
 
-Then grant the terminal (or the CLI's host process) Full Disk Access on macOS
-so it can read `~/Library/Messages/chat.db`, and edit
-`~/.config/dkdc-io/imessage/access.toml` to add at least one handle or a
-`self.chat_id`.
+1. grant Full Disk Access to the host process that will run the binary
+2. populate `~/.config/dkdc-io/imessage/access.toml`
+3. point your client at `dkdc-io-imessage --stdio`
 
-Details + Codex and Claude Code config snippets live in the
+Full setup and config snippets for Codex and Claude Code live in the
 [crate README](crates/dkdc-io-imessage/README.md).
 
-## Repo layout
+## Security posture
 
-```
-imessage-plugin/
-  Cargo.toml                              # workspace
-  LICENSE-MIT / LICENSE-APACHE
-  crates/
-    dkdc-io-imessage/                     # the MCP server crate
-      Cargo.toml
-      README.md
-      src/
-      tests/injection.rs                  # allowlist + osascript argv tests
-      tests/stdio_smoke.rs                # end-to-end JSON-RPC smoke
-```
+- `reply` only sends to allowlisted handles or `self.chat_id`
+- `list_messages` and `read_message` never surface non-allowlisted chats
+- AppleScript runs with argv, not string interpolation
+- empty allowlist fails closed by default
 
-One crate, one binary, zero runtime dependencies on any host framework.
+The anti-regression coverage lives in `tests/injection.rs` and
+`tests/stdio_smoke.rs`.
 
 ## Develop
 
@@ -59,25 +106,14 @@ cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
 ```
 
-All three run clean on macOS.
-
 ## Prior art
 
-This plugin is an independent Rust implementation inspired by Anthropic's
-official iMessage plugin for Claude Code
-([anthropics/claude-plugins-official/external_plugins/imessage][upstream]),
-a TypeScript/Bun server that pioneered the shape we follow: stdio MCP, read
-`~/Library/Messages/chat.db` directly, send via AppleScript, gate with a
-local allowlist, bypass the gate for self-chat. Credit for the shape goes
-there. Bugs and design choices here are ours.
-
-Differences worth knowing about if you're evaluating both:
-
-- **Rust**, single static binary via `cargo install` (the upstream uses Bun).
-- **LLM-CLI-agnostic**: one server, three tools, drop-in for Codex CLI,
-  Claude Code, or any MCP-over-stdio client.
-- Minimal tool surface (`reply`, `list_messages`, `read_message`). No
-  channel-event push model; clients poll via `list_messages`.
+This is an independent Rust implementation inspired by Anthropic's official
+iMessage plugin for Claude Code
+([anthropics/claude-plugins-official/external_plugins/imessage][upstream]).
+That project established the shape: stdio MCP, `chat.db` reads, AppleScript
+send, local allowlist. This repo keeps that shape and ships it as one Rust
+binary for any MCP-over-stdio client.
 
 [upstream]: https://github.com/anthropics/claude-plugins-official/tree/main/external_plugins/imessage
 

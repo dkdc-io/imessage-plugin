@@ -4,6 +4,14 @@ All notable changes to `dkdc-io-imessage` are documented here. Format loosely
 follows [Keep a Changelog](https://keepachangelog.com/) and the project uses
 [SemVer](https://semver.org/).
 
+## [0.1.4] - 2026-04-18
+
+### Changed
+
+- Rewrote the repo README around a live Codex-to-iMessage round-trip demo.
+- Added the product screenshot to the repo so the GitHub page carries the
+  terminal and phone flow directly.
+
 ## [0.1.3] - 2026-04-18
 
 ### Added
