@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `imessage-mcp` are documented here. Format loosely
+All notable changes to `dkdc-io-imessage` are documented here. Format loosely
 follows [Keep a Changelog](https://keepachangelog.com/) and the project uses
 [SemVer](https://semver.org/).
 
@@ -8,16 +8,15 @@ follows [Keep a Changelog](https://keepachangelog.com/) and the project uses
 
 ### Changed
 
-- rename the repo and crate from `imessage-plugin` / `dkdc-io-imessage` to
-  `imessage-mcp` / `imessage-mcp`
+- rename the GitHub repo from `imessage-plugin` to `imessage-mcp`
+- keep the crate and binary names as `dkdc-io-imessage`
 - update docs, screenshots, scripts, and public URLs to the new name
 - docs: real end-to-end Claude capture + round-trip screenshot + scripts/
 - note the Codex fork requirement for `codex mcp add`
 - make the prior-art arc explicit: upstream TypeScript/Bun MCP server, direct
   port, typedstream truncation bug, echo-tracker bug, fixes, then Rust rewrite
   for correctness
-- the old `dkdc-io-imessage` crate remains published on crates.io and is not
-  yanked
+- the existing `dkdc-io-imessage` crate remains the published crates.io name
 
 ## [0.1.5] - 2026-04-18
 

@@ -18,7 +18,7 @@ if [[ ! -f "$MCP_CONFIG" ]]; then
   "mcpServers": {
     "imessage": {
       "type": "stdio",
-      "command": "imessage-mcp",
+      "command": "dkdc-io-imessage",
       "args": ["--stdio"]
     }
   }
@@ -26,7 +26,7 @@ if [[ ! -f "$MCP_CONFIG" ]]; then
 JSON
 fi
 
-HANDLE="$(imessage-mcp check | awk '/^self\.chat_id:/ {print $2}' | sed 's/.*;-;//')"
+HANDLE="$(dkdc-io-imessage check | awk '/^self\.chat_id:/ {print $2}' | sed 's/.*;-;//')"
 [[ -n "$HANDLE" ]] || { echo "could not resolve self handle" >&2; exit 1; }
 
 # Helper: fetch the N most recent messages from the server via MCP stdio.
@@ -38,7 +38,7 @@ list_messages_json() {
     sleep 0.3
     echo "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"list_messages\",\"arguments\":{\"limit\":${limit}}}}"
     sleep 0.6
-  ) | imessage-mcp --stdio 2>/dev/null | \
+  ) | dkdc-io-imessage --stdio 2>/dev/null | \
     awk '/"id":1/ {print; exit}' | \
     python3 -c 'import json,sys; d=json.loads(sys.stdin.read()); print(d["result"]["content"][0]["text"])'
 }

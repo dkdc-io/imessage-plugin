@@ -45,7 +45,7 @@ fn fail_closed_if_empty(access: &Access) -> Result<()> {
             .map(|p| p.display().to_string())
             .unwrap_or_else(|_| "(unknown path)".into());
         bail!(
-            "allowlist is empty. imessage-mcp is fail-closed by default. \
+            "allowlist is empty. dkdc-io-imessage is fail-closed by default. \
              Edit {path} to add `self.chat_id` and/or `allow_from` handles, then retry. \
              See https://github.com/dkdc-io/imessage-mcp for setup."
         );

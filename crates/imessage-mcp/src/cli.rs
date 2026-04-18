@@ -18,7 +18,7 @@ pub fn run() -> ExitCode {
             ExitCode::SUCCESS
         }
         ["-V"] | ["--version"] => {
-            println!("imessage-mcp {}", crate::VERSION);
+            println!("dkdc-io-imessage {}", crate::VERSION);
             ExitCode::SUCCESS
         }
         ["check"] => check_access(),
@@ -32,16 +32,16 @@ pub fn run() -> ExitCode {
 
 fn print_help() {
     println!(
-        r#"imessage-mcp {version}
+        r#"dkdc-io-imessage {version}
 
 iMessage MCP server. Exposes reply / list_messages / read_message tools to an
 MCP client (Codex CLI, Claude Code, ...).
 
 Usage:
-  imessage-mcp [--stdio]    run the MCP server on stdin/stdout (default)
-  imessage-mcp check        print the loaded allowlist and config paths
-  imessage-mcp --version    print version and exit
-  imessage-mcp --help       show this help
+  dkdc-io-imessage [--stdio]    run the MCP server on stdin/stdout (default)
+  dkdc-io-imessage check        print the loaded allowlist and config paths
+  dkdc-io-imessage --version    print version and exit
+  dkdc-io-imessage --help       show this help
 
 Config:
   ~/.config/dkdc-io/imessage/access.toml     allowlist

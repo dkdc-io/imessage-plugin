@@ -16,8 +16,8 @@ use std::sync::Arc;
 use rusqlite::Connection;
 use serde_json::json;
 
-use imessage_mcp::access::Access;
-use imessage_mcp::tools::{self, State};
+use dkdc_io_imessage::access::Access;
+use dkdc_io_imessage::tools::{self, State};
 
 fn mem_db() -> Connection {
     let conn = Connection::open_in_memory().unwrap();
@@ -174,7 +174,7 @@ fn list_messages_never_returns_unallowlisted_chat_rows() {
 /// assert the wire-level defense.
 #[test]
 fn osascript_script_body_is_static_and_reads_argv() {
-    let script = imessage_mcp_tests::send_script();
+    let script = dkdc_io_imessage_tests::send_script();
     // Body must not embed a template hole for the text or chat_guid.
     assert!(!script.contains("{{"), "script uses template placeholders");
     assert!(
@@ -261,7 +261,7 @@ fn have_osascript() -> bool {
 // We mirror the constant here with a compile-time assertion via a private
 // helper mod. If the real string ever changes, the unit test in send.rs still
 // covers behavior; this file's assertions are structural.
-mod imessage_mcp_tests {
+mod dkdc_io_imessage_tests {
     pub fn send_script() -> &'static str {
         "on run argv
   tell application \"Messages\" to send (item 1 of argv) to chat id (item 2 of argv)
